@@ -1,0 +1,54 @@
+{
+    "Stark": [
+        "Bran",
+        "Robb",
+        "Lyanna",
+        "Rickon",
+        "Sansa",
+        "Eddard",
+        "Catelyn",
+        "Arya"
+    ],
+    "Greyjoy": [
+        "Theon",
+        "Balon",
+        "Euron",
+        "Asha",
+        "Rodrik",
+        "Aeron",
+        "Victarion"
+    ],
+    "Lannister": [
+        "Tywin",
+        "Joffrey",
+        "Jaime",
+        "Cersei",
+        "Kevan",
+        "Tyrion"
+    ],
+    "Targaryen": [
+        "Daenerys",
+        "Aerys",
+        "Aegon 1",
+        "Viserys",
+        "Rhaegar"
+    ],
+    "Baratheon": [
+        "Robert",
+        "Stannis",
+        "Renly",
+        "Shireen"
+    ],
+    "Tyrell": [
+        "Garlan",
+        "Olenna",
+        "Margaery"
+    ],
+    "Tully": [
+        "Edmure",
+        "Hoster"
+    ],
+    "No House": [
+        "Varys"
+    ]
+}

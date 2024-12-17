@@ -1,0 +1,182 @@
+[
+    {
+        "house": "Tully",
+        "name": "Edmure",
+        "location": 0
+    },
+    {
+        "house": "No House",
+        "name": "Varys",
+        "location": 1
+    },
+    {
+        "house": "Targaryen",
+        "name": "Viserys",
+        "location": 2
+    },
+    {
+        "house": "Baratheon",
+        "name": "Stannis",
+        "location": 3
+    },
+    {
+        "house": "Baratheon",
+        "name": "Renly",
+        "location": 4
+    },
+    {
+        "house": "Greyjoy",
+        "name": "Victarion",
+        "location": 5
+    },
+    {
+        "house": "Targaryen",
+        "name": "Rhaegar",
+        "location": 6
+    },
+    {
+        "house": "Tully",
+        "name": "Hoster",
+        "location": 7
+    },
+    {
+        "house": "Stark",
+        "name": "Rickon",
+        "location": 8
+    },
+    {
+        "house": "Greyjoy",
+        "name": "Theon",
+        "location": 9
+    },
+    {
+        "house": "Tyrell",
+        "name": "Margaery",
+        "location": 10
+    },
+    {
+        "house": "Greyjoy",
+        "name": "Balon",
+        "location": 11
+    },
+    {
+        "house": "Baratheon",
+        "name": "Shireen",
+        "location": 12
+    },
+    {
+        "house": "Lannister",
+        "name": "Cersei",
+        "location": 13
+    },
+    {
+        "house": "Tyrell",
+        "name": "Olenna",
+        "location": 14
+    },
+    {
+        "house": "Greyjoy",
+        "name": "Aeron",
+        "location": 15
+    },
+    {
+        "house": "Lannister",
+        "name": "Tyrion",
+        "location": 16
+    },
+    {
+        "house": "Stark",
+        "name": "Arya",
+        "location": 17
+    },
+    {
+        "house": "Lannister",
+        "name": "Kevan",
+        "location": 18
+    },
+    {
+        "house": "Targaryen",
+        "name": "Daenerys",
+        "location": 19
+    },
+    {
+        "house": "Baratheon",
+        "name": "Robert",
+        "location": 20
+    },
+    {
+        "house": "Stark",
+        "name": "Bran",
+        "location": 21
+    },
+    {
+        "house": "Stark",
+        "name": "Sansa",
+        "location": 22
+    },
+    {
+        "house": "Lannister",
+        "name": "Jaime",
+        "location": 23
+    },
+    {
+        "house": "Lannister",
+        "name": "Tywin",
+        "location": 24
+    },
+    {
+        "house": "Stark",
+        "name": "Robb",
+        "location": 25
+    },
+    {
+        "house": "Greyjoy",
+        "name": "Asha",
+        "location": 26
+    },
+    {
+        "house": "Lannister",
+        "name": "Joffrey",
+        "location": 27
+    },
+    {
+        "house": "Greyjoy",
+        "name": "Euron",
+        "location": 28
+    },
+    {
+        "house": "Tyrell",
+        "name": "Garlan",
+        "location": 29
+    },
+    {
+        "house": "Greyjoy",
+        "name": "Rodrik",
+        "location": 30
+    },
+    {
+        "house": "Targaryen",
+        "name": "Aegon 1",
+        "location": 31
+    },
+    {
+        "house": "Targaryen",
+        "name": "Aerys",
+        "location": 32
+    },
+    {
+        "house": "Stark",
+        "name": "Eddard",
+        "location": 33
+    },
+    {
+        "house": "Stark",
+        "name": "Lyanna",
+        "location": 34
+    },
+    {
+        "house": "Stark",
+        "name": "Catelyn",
+        "location": 35
+    }
+]
