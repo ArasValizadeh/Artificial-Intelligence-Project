@@ -204,6 +204,7 @@ def display_winner(board, winner, winner_agent):
         text = winner_agent[max(0, winner_agent.find('/'), winner_agent.find('\\')):]
 
     # Render the text
+    print(text)
     text = font.render(text + ' wins!', True, [255, 255, 255])
 
     # Get the size of the text

@@ -1,6 +1,5 @@
 import math
 from classes import Card, Player
-import time
 
 def find_varys(cards):
     '''
