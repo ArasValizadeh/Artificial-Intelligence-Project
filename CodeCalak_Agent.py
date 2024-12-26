@@ -1,5 +1,6 @@
 import math
 from classes import Card, Player
+import time
 
 def find_varys(cards):
     '''
@@ -78,12 +79,12 @@ def evaluate_state(cards, player1, player2):
     # Add points for completed houses for player1
     for house, cards_count in player1.get_cards().items():
         if len(cards_count) == house_total_cards[house]:
-            score += 20  # Reward for completing a house
+            score += 40 # Reward for completing a house
 
     # Subtract points for completed houses for player2
     for house, cards_count in player2.get_cards().items():
         if len(cards_count) == house_total_cards[house]:
-            score -= 20  # Penalty for opponent completing a house
+            score -= 40  # Penalty for opponent completing a house
 
     # Add points for each card captured in favor of player1
     for house, cards_count in player1.get_cards().items():
@@ -92,7 +93,7 @@ def evaluate_state(cards, player1, player2):
     # Subtract points for each card captured in favor of player2
     for house, cards_count in player2.get_cards().items():
         score -= len(cards_count) * 5
-
+    
     return score
 
 def simulate_move(cards, move, player1, player2, is_maximizing):
@@ -144,6 +145,7 @@ def simulate_move(cards, move, player1, player2, is_maximizing):
 
     return simulated_cards, simulated_player1, simulated_player2
 
+
 def minimax(cards, player1, player2, depth, is_maximizing, alpha, beta):
     '''
     Implements the minimax algorithm with alpha-beta pruning.
@@ -191,23 +193,24 @@ def minimax(cards, player1, player2, depth, is_maximizing, alpha, beta):
 
 def get_move(cards, player1, player2):
     '''
-    Determines the best move for the player using the minimax algorithm.
-    
+    Determines the best move using both minimax and alpha-beta pruning, and prints timing results.
+
     Parameters:
         cards (list): list of Card objects
         player1 (Player): the current player
         player2 (Player): the opponent
-    
+
     Returns:
         move (int): the best move for the player
     '''
     best_move = None
+
     best_score = -math.inf
     for move in get_valid_moves(cards):
         simulated_cards, new_player1, new_player2 = simulate_move(
             cards, move, player1, player2, True
         )
-        move_score = minimax(simulated_cards, new_player1, new_player2, depth=3, is_maximizing=False, alpha=-math.inf, beta=math.inf)
+        move_score = minimax(simulated_cards, new_player1, new_player2, depth=7, is_maximizing=True, alpha=-math.inf, beta=math.inf)
         if move_score > best_score:
             best_score = move_score
             best_move = move
