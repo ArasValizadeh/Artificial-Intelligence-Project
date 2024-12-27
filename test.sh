@@ -6,7 +6,7 @@ agent1_wins=0
 agent2_wins=0
 
 # Loop 10 times
-for i in {1..3}
+for i in {1..10}
 do
     echo "🚀 Running game $i"
     result=$(python3 main.py)
