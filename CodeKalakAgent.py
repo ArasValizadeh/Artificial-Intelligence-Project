@@ -141,7 +141,7 @@ def evaluate_state(cards, player1, player2):
 
     return score
 
-def minimax(cards, player1, player2, depth, is_maximizing, alpha=-inf, beta=inf, deep_search=False):
+def minimax(cards, player1, player2, depth, is_maximizing, alpha=-inf, beta=inf, no_heuristic=False):
     """
     Uses the Minimax algorithm with Alpha-Beta pruning and optional deep search
     to determine the best move for a given game state.
@@ -154,7 +154,7 @@ def minimax(cards, player1, player2, depth, is_maximizing, alpha=-inf, beta=inf,
         is_maximizing (bool): Indicates if the current player is maximizing the score.
         alpha (float): Alpha value for pruning (best score for maximizing player).
         beta (float): Beta value for pruning (best score for minimizing player).
-        deep_search (bool, optional): Flag for additional end-game evaluation when no moves remain.
+        no_heuristic (bool, optional): Flag for additional end-game evaluation when no moves remain.
 
     Returns:
         tuple: Contains:
@@ -162,19 +162,23 @@ def minimax(cards, player1, player2, depth, is_maximizing, alpha=-inf, beta=inf,
             - int or None: The index of the optimal move, or None if no valid moves are available.
     """
     valid_moves = get_valid_moves(cards)
-    if depth == 0 or not valid_moves:
-        if deep_search:
-            winner_score = 2000 if calculate_winner(player1, player2) == 1 else -2000
-            return winner_score, None
-        score = evaluate_state(cards, player1, player2)
-        return score, None
+
+    if depth == 0 or len(valid_moves) == 0:
+        if no_heuristic:
+            if calculate_winner(player1, player2) == 1:
+                winner_score = 2000
+            else:
+                winner_score = -2000
+            return (winner_score, None)
+        else:
+            return (evaluate_state(cards, player1, player2), None)
 
     optimal_move = None
     if is_maximizing:
         max_eval = -inf
         for move in valid_moves:
             next_cards, next_player1, next_player2 = simulate_move(cards, player1, player2, move, player=1)
-            current_eval, _ = minimax(next_cards, next_player1, next_player2, depth - 1, False, alpha, beta, deep_search)
+            current_eval, _ = minimax(next_cards, next_player1, next_player2, depth - 1, False, alpha, beta, no_heuristic)
             if current_eval > max_eval:
                 max_eval = current_eval
                 optimal_move = move
@@ -186,7 +190,7 @@ def minimax(cards, player1, player2, depth, is_maximizing, alpha=-inf, beta=inf,
         min_eval = inf
         for move in valid_moves:
             next_cards, next_player1, next_player2 = simulate_move(cards, player1, player2, move, player=2)
-            current_eval, _ = minimax(next_cards, next_player1, next_player2, depth - 1, True, alpha, beta, deep_search)
+            current_eval, _ = minimax(next_cards, next_player1, next_player2, depth - 1, True, alpha, beta, no_heuristic)
             if current_eval < min_eval:
                 min_eval = current_eval
                 optimal_move = move
@@ -195,6 +199,53 @@ def minimax(cards, player1, player2, depth, is_maximizing, alpha=-inf, beta=inf,
                 break  # Stop exploring this branch
         return min_eval, optimal_move
 
+def get_move(cards, player1, player2):
+    """
+    Determines the best move for Player 1 using the Minimax algorithm with Alpha-Beta pruning.
+
+    Parameters:
+        cards (list): A list of `Card` objects representing the current game state.
+        player1 (Player): The Player 1 object including banners and cards.
+        player2 (Player): The Player 2 object including banners and cards.
+
+    Returns:
+        int or None: The index of the best move for Player 1, or None if no moves are available.
+    """
+    # if there is no limit in time:
+    
+    if len(cards) < 25:
+        depth = 9
+    else:
+        depth = 5
+
+    flag = len(cards) <= 16
+
+    '''
+    if len(cards) < 30 and len(cards) > 22:
+        depth = 5
+        flag = False
+    elif len(cards) <= 22 and len(cards) > 16:
+        depth = 7
+        flag = False
+    elif len(cards) <= 16 :
+        depth = 9
+        flag = True
+    else:
+        depth = 3
+        flag = False
+    '''
+    best_move = minimax(
+        cards=cards, 
+        player1=player1, 
+        player2=player2, 
+        depth=depth, 
+        is_maximizing=True, 
+        alpha=-inf, 
+        beta=inf, 
+        no_heuristic=flag
+    )[1]
+
+    return best_move
 
 def simulate_move(cards, player1, player2, move, player):
     """
@@ -218,43 +269,3 @@ def simulate_move(cards, player1, player2, move, player):
     selected_house = make_move(new_cards, move, current_player)
     set_banners(new_player1, new_player2, selected_house, player)
     return new_cards, new_player1, new_player2
-
-def get_move(cards, player1, player2):
-    """
-    Determines the best move for Player 1 using the Minimax algorithm with Alpha-Beta pruning.
-
-    Parameters:
-        cards (list): A list of `Card` objects representing the current game state.
-        player1 (Player): The Player 1 object including banners and cards.
-        player2 (Player): The Player 2 object including banners and cards.
-
-    Returns:
-        int or None: The index of the best move for Player 1, or None if no moves are available.
-    """
-    # if there is no limit in time:
-    
-    depth = 9 if len(cards) < 25 else 5
-    flag = True if (len(cards) <= 16) else False
-    '''
-    if len(cards) < 30 and len(cards) > 22:
-        depth = 5
-        flag = False
-    elif len(cards) <= 22 and len(cards) > 16:
-        depth = 7
-        flag = False
-    elif len(cards) <= 16 :
-        depth = 9
-        flag = True
-    else:
-        depth = 3
-        flag = False
-    '''
-    _, best_move = minimax(
-        cards, player1, player2,
-        depth=depth,
-        is_maximizing=True,
-        alpha=-inf,
-        beta=inf,
-        deep_search = flag
-    )
-    return best_move
