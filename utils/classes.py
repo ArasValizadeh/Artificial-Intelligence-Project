@@ -82,6 +82,16 @@ class Player:
         '''
 
         return self.agent
+
+    def get_cards2(self):
+        '''
+        This function returns a flat list of all cards belonging to the player.
+
+        Returns:
+            cards (list): a flat list of Card objects
+        '''
+        # Flatten all cards into a single list
+        return [card for cards_in_house in self.cards.values() for card in cards_in_house]
     
     def get_cards(self):
         '''
@@ -90,9 +100,7 @@ class Player:
         Returns:
             cards (dict): the cards of the player
         '''
-
         return self.cards
-    
     def get_banners(self):
         '''
         This function returns the banners of the player.

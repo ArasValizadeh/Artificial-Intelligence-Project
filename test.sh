@@ -7,7 +7,7 @@ agent2_wins=0
 agent_name="2_agent"
 
 # Loop 10 times
-for i in {1..20}
+for i in {1..10}
 do
     echo "🚀 Running game $i"
     result=$(python3 main.py)
@@ -17,7 +17,7 @@ do
         echo "😀 result: $result $agent_name wins"
         ((agent1_wins++))
     elif [[ "$result" == *"random"* ]]; then
-        echo "😀 result: $result random wins"
+        echo "😀 result: $result 3_agent wins"
         ((agent2_wins++))
     fi
 done
