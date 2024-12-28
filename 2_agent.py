@@ -2,26 +2,29 @@ from os import name as os_name
 from os import system as os_system
 from os.path import abspath, join, dirname
 import copy
-import copy
-import copy
 from main import make_move, set_banners,calculate_winner
 
 def find_varys(cards):
-    """
-    Finds the location of Varys on the board.
+    '''
+    This function finds the location of Varys on the board.
+
     Parameters:
         cards (list): list of Card objects
+
     Returns:
         varys_location (int): location of Varys
-    """
-    for card in cards:
-        if card.get_name() == 'Varys':
-            return card.get_location()
+    '''
+
+    varys = [card for card in cards if card.get_name() == 'Varys']
+
+    varys_location = varys[0].get_location()
+
+    return varys_location
 
 
 def get_valid_moves(cards):
     '''
-    Gets the possible moves for the player.
+    This function gets the possible moves for the player.
 
     Parameters:
         cards (list): list of Card objects
@@ -29,15 +32,22 @@ def get_valid_moves(cards):
     Returns:
         moves (list): list of possible moves
     '''
+
+    # Get the location of Varys
     varys_location = find_varys(cards)
+
+    # Get the row and column of Varys
     varys_row, varys_col = varys_location // 6, varys_location % 6
+
     moves = []
 
+    # Get the cards in the same row or column as Varys
     for card in cards:
         if card.get_name() == 'Varys':
             continue
 
         row, col = card.get_location() // 6, card.get_location() % 6
+
         if row == varys_row or col == varys_col:
             moves.append(card.get_location())
 
@@ -46,55 +56,41 @@ def get_valid_moves(cards):
 
 def evaluate_state(cards, player1, player2):
     """
-    Improved heuristic evaluation function.
+    heuristic evaluation function to give score for each state in game.
     """
-    score = 0
-    
-    # Banner value
     banner_weights = {
-        'Stark': 8,
-        'Greyjoy': 6,
-        'Lannister': 6,
-        'Targaryen': 6,
-        'Baratheon': 5,
-        'Tyrell': 4,
-        'Tully': 4
+        'Stark': 8,'Greyjoy': 6,'Lannister': 6,'Targaryen': 6,'Baratheon': 5,'Tyrell': 4,'Tully': 4
     }
-    banner_members = {
-        'Stark': 8,
-        'Greyjoy': 7,
-        'Lannister': 6,
-        'Targaryen': 5,
-        'Baratheon': 4,
-        'Tyrell': 3,
-        'Tully': 2
+    banner_cards = {
+        'Stark': 8,'Greyjoy': 7,'Lannister': 6,'Targaryen': 5,'Baratheon': 4,'Tyrell': 3,'Tully': 2
     }
     
-    # Evaluate player 1's banners
-    for house, banner in player1.get_banners().items():
-        if banner:
-            # Base value for owning the banner
-            score += banner_weights[house] * 4
-            
-            # Bonus for cards collected in the banner's house
-            number_of_members_acquired = len([card for card in player1.get_cards()[house]])
-            if number_of_members_acquired > banner_members[house] // 2 + 1:
-                number_of_members_acquired = 0
-            score += number_of_members_acquired 
+    score = 0
 
-    
-    # Evaluate player 2's banners
-    for house, banner in player2.get_banners().items():
-        if banner:
-            # Base value for opponent owning the banner
+    #calculate score for player 1
+    for house in player1.get_banners():
+        if player1.get_banners()[house]:
+            score += banner_weights[house] * 4
+            num_cards = 0
+            for card in player1.get_cards():
+                if card == house:
+                    num_cards += 1
+            if num_cards <= banner_cards[house] // 2 + 1:
+                score += num_cards * 2
+
+    # Calculate score for Player 2
+    for house in player2.get_banners():
+        if player2.get_banners()[house]:
             score -= banner_weights[house] * 4
-            
-            # Bonus for opponent cards collected in the banner's house
-            number_of_members_acquired = len([card for card in player2.get_cards()[house]])
-            if number_of_members_acquired > banner_members[house] // 2 + 1 :
-                number_of_members_acquired = -banner_members[house] // 2
-            score -= number_of_members_acquired * 2
-    
+            num_cards = 0
+            for card in player1.get_cards():
+                if card == house:
+                    num_cards += 1
+            if num_cards > banner_cards[house] // 2 + 1:
+                penalty = -(banner_cards[house] // 2)
+            else:
+                penalty = num_cards
+            score -= penalty * 2
     return score
 
 def minimax(cards, player1, player2, depth, maximizing_player, alpha, beta, deep_search=False):
