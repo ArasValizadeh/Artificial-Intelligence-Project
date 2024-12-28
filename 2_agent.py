@@ -3,6 +3,7 @@ from os import system as os_system
 from os.path import abspath, join, dirname
 import copy
 from main import make_move, set_banners,calculate_winner
+from math import inf
 
 def find_varys(cards):
     '''
@@ -56,7 +57,17 @@ def get_valid_moves(cards):
 
 def evaluate_state(cards, player1, player2):
     """
-    heuristic evaluation function to give score for each state in game.
+    Calculates a heuristic score for the current game state by evaluating the banners
+    captured by both players and the number of cards they control.
+
+    Parameters:
+        cards (list): A list of `Card` objects representing the current game state.
+        player1 (Player): An object representing Player 1, including banners and cards.
+        player2 (Player): An object representing Player 2, including banners and cards.
+
+    Returns:
+        int: A score indicating the favorability of the game state for Player 1.
+            Positive scores favor Player 1; negative scores favor Player 2.
     """
     banner_weights = {
         'Stark': 8,'Greyjoy': 6,'Lannister': 6,'Targaryen': 6,'Baratheon': 5,'Tyrell': 4,'Tully': 4
@@ -93,69 +104,104 @@ def evaluate_state(cards, player1, player2):
             score -= penalty * 2
     return score
 
-def minimax(cards, player1, player2, depth, maximizing_player, alpha, beta, deep_search=False):
+def minimax(cards, player1, player2, depth, is_maximizing, alpha=-inf, beta=inf, deep_search=False):
     """
-    Minimax implementation with optional deep_search mode and Alpha-Beta pruning.
+    Uses the Minimax algorithm with Alpha-Beta pruning and optional deep search
+    to determine the best move for a given game state.
+
+    Parameters:
+        cards (list): Represents the current game board as `Card` objects.
+        player1 (Player): Player 1's state including banners and cards.
+        player2 (Player): Player 2's state including banners and cards.
+        depth (int): Depth limit for game tree exploration.
+        is_maximizing (bool): Indicates if the current player is maximizing the score.
+        alpha (float): Alpha value for pruning (best score for maximizing player).
+        beta (float): Beta value for pruning (best score for minimizing player).
+        deep_search (bool, optional): Flag for additional end-game evaluation when no moves remain.
+
+    Returns:
+        tuple: Contains:
+            - int: The highest or lowest score achievable from this state.
+            - int or None: The index of the optimal move, or None if no valid moves are available.
     """
-    if depth == 0 or len(get_valid_moves(cards)) == 0:
+    valid_moves = get_valid_moves(cards)
+    if depth == 0 or not valid_moves:
         if deep_search:
-            if calculate_winner(player1, player2) == 1:
-                return 1000, None
-            else:
-                return -1000, None
-        return evaluate_state(cards, player1, player2), None
+            winner_score = 1000 if calculate_winner(player1, player2) == 1 else -1000
+            return winner_score, None
+        score = evaluate_state(cards, player1, player2)
+        return score, None
 
-    best_move = None
-    if maximizing_player:
-        best_eval = float('-inf')
-        for move in get_valid_moves(cards):
-            new_cards, new_player1, new_player2 = simulate_move(cards, player1, player2, move, player=1)
-            eval_score, _ = minimax(new_cards, new_player1, new_player2, depth - 1, False, alpha, beta, deep_search)
-            if eval_score > best_eval:
-                best_eval = eval_score
-                best_move = move
-            alpha = max(alpha, eval_score)
+    optimal_move = None
+    if is_maximizing:
+        max_eval = -inf
+        for move in valid_moves:
+            next_cards, next_player1, next_player2 = simulate_move(cards, player1, player2, move, player=1)
+            current_eval, _ = minimax(next_cards, next_player1, next_player2, depth - 1, False, alpha, beta, deep_search)
+            if current_eval > max_eval:
+                max_eval = current_eval
+                optimal_move = move
+            alpha = max(alpha, current_eval)
             if beta <= alpha:
-                break  # Prune the branch
+                break  # Stop exploring this branch
+        return max_eval, optimal_move
     else:
-        best_eval = float('inf')
-        for move in get_valid_moves(cards):
-            new_cards, new_player1, new_player2 = simulate_move(cards, player1, player2, move, player=2)
-            eval_score, _ = minimax(new_cards, new_player1, new_player2, depth - 1, True, alpha, beta, deep_search)
-            if eval_score < best_eval:
-                best_eval = eval_score
-                best_move = move
-            beta = min(beta, eval_score)
+        min_eval = inf
+        for move in valid_moves:
+            next_cards, next_player1, next_player2 = simulate_move(cards, player1, player2, move, player=2)
+            current_eval, _ = minimax(next_cards, next_player1, next_player2, depth - 1, True, alpha, beta, deep_search)
+            if current_eval < min_eval:
+                min_eval = current_eval
+                optimal_move = move
+            beta = min(beta, current_eval)
             if beta <= alpha:
-                break  # Prune the branch
-
-    return best_eval, best_move
+                break  # Stop exploring this branch
+        return min_eval, optimal_move
 
 
 def simulate_move(cards, player1, player2, move, player):
     """
-    Simulate a move and return the new state of the game.
+    Simulates a player's move and returns the resulting game state.
+
+    Parameters:
+        cards (list): A list of `Card` objects representing the current game state.
+        player1 (Player): The Player 1 object including banners and cards.
+        player2 (Player): The Player 2 object including banners and cards.
+        move (int): The index of the card to move.
+        player (int): The player making the move (1 for Player 1, 2 for Player 2).
+
+    Returns:
+        tuple: A tuple containing:
+            - list: A deep copy of the updated `cards` after the move.
+            - Player: A deep copy of the updated `player1` object.
+            - Player: A deep copy of the updated `player2` object.
     """
-    new_cards = copy.deepcopy(cards)
-    new_player1 = copy.deepcopy(player1)
-    new_player2 = copy.deepcopy(player2)
-
-    selected_house = make_move(new_cards, move, new_player1 if player == 1 else new_player2)
-    set_banners(new_player1, new_player2, selected_house, 1 if player == 1 else 2)
-
+    new_cards, new_player1, new_player2 = map(copy.deepcopy, [cards, player1, player2])
+    current_player = new_player1 if player == 1 else new_player2
+    selected_house = make_move(new_cards, move, current_player)
+    set_banners(new_player1, new_player2, selected_house, player)
     return new_cards, new_player1, new_player2
 
 def get_move(cards, player1, player2):
     """
-    Get the best move using the Minimax function with Alpha-Beta pruning.
+    Determines the best move for Player 1 using the Minimax algorithm with Alpha-Beta pruning.
+
+    Parameters:
+        cards (list): A list of `Card` objects representing the current game state.
+        player1 (Player): The Player 1 object including banners and cards.
+        player2 (Player): The Player 2 object including banners and cards.
+
+    Returns:
+        int or None: The index of the best move for Player 1, or None if no moves are available.
     """
-    depth = 7 if len(cards) < 20 else 5
-
+    depth = 9 if len(cards) < 25 else 5
+    flag = True if (len(cards) <= 16) else False
     _, best_move = minimax(
-        cards, player1, player2, 
-        depth=depth, maximizing_player=True, 
-        alpha=float('-inf'), beta=float('inf'), 
-        deep_search=len(cards) <= 16
+        cards, player1, player2,
+        depth=depth,
+        is_maximizing=True,
+        alpha=-inf,
+        beta=inf,
+        deep_search = flag
     )
-
     return best_move
