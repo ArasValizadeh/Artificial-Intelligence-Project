@@ -1,0 +1,86 @@
+{
+    "Stark": [
+        "Bran",
+        "Robb",
+        "Lyanna",
+        "Rickon",
+        "Sansa",
+        "Eddard",
+        "Catelyn",
+        "Arya"
+    ],
+    "Greyjoy": [
+        "Theon",
+        "Balon",
+        "Euron",
+        "Asha",
+        "Rodrik",
+        "Aeron",
+        "Victarion"
+    ],
+    "Lannister": [
+        "Tywin",
+        "Joffrey",
+        "Jaime",
+        "Cersei",
+        "Kevan",
+        "Tyrion"
+    ],
+    "Targaryen": [
+        "Daenerys",
+        "Aerys",
+        "Aegon 1",
+        "Viserys",
+        "Rhaegar"
+    ],
+    "Baratheon": [
+        "Robert",
+        "Stannis",
+        "Renly",
+        "Shireen"
+    ],
+    "Tyrell": [
+        "Garlan",
+        "Olenna",
+        "Margaery"
+    ],
+    "Tully": [
+        "Edmure",
+        "Hoster"
+    ],
+    "No House": [
+        "Varys"
+    ],
+    "Companion": {
+        "Jon": {
+            "Row": 0,
+            "Column": 6,
+            "Choice": 1
+        },
+        "Gendry": {
+            "Row": 0,
+            "Column": 7.5,
+            "Choice": 0
+        },
+        "Ramsay": {
+            "Row": 2,
+            "Column": 6,
+            "Choice": 2
+        },
+        "Sandor": {
+            "Row": 2,
+            "Column": 7.5,
+            "Choice": 1
+        },
+        "Jaqen": {
+            "Row": 4,
+            "Column": 6,
+            "Choice": 3
+        },
+        "Melisandre": {
+            "Row": 4,
+            "Column": 7.5,
+            "Choice": 0
+        }
+    }
+}
