@@ -22,8 +22,8 @@ path = dirname(abspath(__file__))
 TIMEOUT = 10  # Time limit for the AI agent
 
 parser = argparse.ArgumentParser(description="A Game of Thrones: Hand of the King")
-parser.add_argument('--player1', metavar='p1', type=str, help="either human or an AI file", default='human')
-parser.add_argument('--player2', metavar='p2', type=str, help="either human or an AI file", default='human')
+parser.add_argument('--player1', metavar='p1', type=str, help="either human or an AI file", default='random_agent')
+parser.add_argument('--player2', metavar='p2', type=str, help="either human or an AI file", default='random_agent')
 parser.add_argument('-l', '--load', type=str, help="file containing starting board setup (for repeatability)", default=None)
 parser.add_argument('-s', '--save', type=str, help="file to save board setup to", default=None)
 parser.add_argument('-v', '--video', type=str, help="name of the video file to save", default=None)

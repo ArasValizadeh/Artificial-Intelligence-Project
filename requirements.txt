@@ -1,0 +1,4 @@
+pygame==2.6.0
+numpy
+argparse
+moviepy==1.0.3 
