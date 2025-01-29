@@ -201,81 +201,116 @@ def minimax(cards, player1, player2, depth, is_maximizing, alpha=-inf, beta=inf,
         return min_eval, optimal_move
 
 
+def simulate_move(cards, player1, player2, move, player):
+    """
+    Simulates a player's move and returns the resulting game state.
+    """
+    # Create new instances instead of using deepcopy
+    new_cards = []
+    for card in cards:
+        new_card = Card(card.get_house(), card.get_name(), card.get_location())
+        new_cards.append(new_card)
+    
+    new_player1 = Player(player1.get_agent())
+    new_player2 = Player(player2.get_agent())
+    
+    # Copy the cards and banners manually
+    for house in player1.get_cards():
+        for card in player1.get_cards()[house]:
+            new_card = Card(card.get_house(), card.get_name(), card.get_location())
+            new_player1.add_card(new_card)
+    
+    for house in player2.get_cards():
+        for card in player2.get_cards()[house]:
+            new_card = Card(card.get_house(), card.get_name(), card.get_location())
+            new_player2.add_card(new_card)
+    
+    # Copy banners
+    for house in player1.get_banners():
+        if player1.get_banners()[house]:
+            new_player1.get_house_banner(house)
+    
+    for house in player2.get_banners():
+        if player2.get_banners()[house]:
+            new_player2.get_house_banner(house)
+    
+    current_player = new_player1 if player == 1 else new_player2
+    selected_house = make_move(new_cards, move, current_player)
+    set_banners(new_player1, new_player2, selected_house, player)
+    
+    return new_cards, new_player1, new_player2
+
 def get_move(cards, player1, player2, companion_cards, choose_companion):
     """
     Determines the best move for Player 1, now supporting companion cards.
     """
+    # Create copies of the game state before passing to minimax
+    new_cards = []
+    for card in cards:
+        new_card = Card(card.get_house(), card.get_name(), card.get_location())
+        new_cards.append(new_card)
+    
+    new_player1 = Player(player1.get_agent())
+    new_player2 = Player(player2.get_agent())
+    
+    # Copy the cards and banners manually
+    for house in player1.get_cards():
+        for card in player1.get_cards()[house]:
+            new_card = Card(card.get_house(), card.get_name(), card.get_location())
+            new_player1.add_card(new_card)
+    
+    for house in player2.get_cards():
+        for card in player2.get_cards()[house]:
+            new_card = Card(card.get_house(), card.get_name(), card.get_location())
+            new_player2.add_card(new_card)
+    
+    # Copy banners
+    for house in player1.get_banners():
+        if player1.get_banners()[house]:
+            new_player1.get_house_banner(house)
+    
+    for house in player2.get_banners():
+        if player2.get_banners()[house]:
+            new_player2.get_house_banner(house)
 
     if choose_companion:
-        # Step 1: Choose the best companion card (right now, just picking the first available one)
+        # Handle companion card selection (existing code)
         if companion_cards:
-            selected_companion = list(companion_cards.keys())[0]  # Choose the first available companion card
+            selected_companion = list(companion_cards.keys())[0]
             move = [selected_companion]
-            
-            # Fetch the required choices based on the companion card
             choices = companion_cards[selected_companion]['Choice']
 
-            if choices == 1:  # For Jon Snow / Sandor Clegane
-                move.append(random.choice(get_valid_moves(cards)))
-            
-            elif choices == 2:  # For Ramsay Snow
-                valid_moves = get_valid_moves(cards)
+            if choices == 1:
+                move.append(random.choice(get_valid_moves(new_cards)))
+            elif choices == 2:
+                valid_moves = get_valid_moves(new_cards)
                 if len(valid_moves) >= 2:
                     move.extend(random.sample(valid_moves, 2))
                 else:
                     move.extend(valid_moves)
-
-            elif choices == 3:  # For Jaqen H'ghar (needs to remove another companion)
-                valid_moves = get_valid_moves(cards)
+            elif choices == 3:
+                valid_moves = get_valid_moves(new_cards)
                 if len(valid_moves) >= 2 and len(companion_cards) > 1:
                     move.extend(random.sample(valid_moves, 2))
                     move.append(random.choice([c for c in companion_cards.keys() if c != selected_companion]))
                 else:
                     move.extend(valid_moves)
                     move.append(random.choice(list(companion_cards.keys())) if companion_cards else None)
-
             return move
 
-    # Otherwise, use Minimax to select the best move for Varys
-    if len(cards) < 25:
-        depth = 9
-    else:
-        depth = 5
-
-    flag = len(cards) <= 16
+    # Use minimax with the copied game state
+    depth = 9 if len(new_cards) < 25 else 5
+    flag = len(new_cards) <= 16
 
     best_move = minimax(
-        cards=cards, 
-        player1=player1, 
-        player2=player2, 
-        depth=depth, 
-        is_maximizing=True, 
-        alpha=-inf, 
-        beta=inf, 
+        cards=new_cards,
+        player1=new_player1,
+        player2=new_player2,
+        depth=depth,
+        is_maximizing=True,
+        alpha=-inf,
+        beta=inf,
         no_heuristic=flag
     )[1]
 
     return best_move
-
-def simulate_move(cards, player1, player2, move, player):
-    """
-    Simulates a player's move and returns the resulting game state.
-
-    Parameters:
-        cards (list): A list of `Card` objects representing the current game state.
-        player1 (Player): The Player 1 object including banners and cards.
-        player2 (Player): The Player 2 object including banners and cards.
-        move (int): The index of the card to move.
-        player (int): The player making the move (1 for Player 1, 2 for Player 2).
-
-    Returns:
-        tuple: A tuple containing:
-            - list: A deep copy of the updated `cards` after the move.
-            - Player: A deep copy of the updated `player1` object.
-            - Player: A deep copy of the updated `player2` object.
-    """
-    new_cards, new_player1, new_player2 = map(copy.deepcopy, [cards, player1, player2])
-    current_player = new_player1 if player == 1 else new_player2
-    selected_house = make_move(new_cards, move, current_player)
-    set_banners(new_player1, new_player2, selected_house, player)
-    return new_cards, new_player1, new_player2

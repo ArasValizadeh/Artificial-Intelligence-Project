@@ -946,11 +946,11 @@ def main(args):
         else:
             file_name += player2.get_agent()
     
-    try:
-        pygraphics.save_video(file_name) # Save the video of the game
+    # try:
+    #     pygraphics.save_video(file_name) # Save the video of the game
     
-    except:
-        print("Error saving video.")
+    # except:
+    #     print("Error saving video.")
 
 if __name__ == "__main__":
     main(parser.parse_args())
