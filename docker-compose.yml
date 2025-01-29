@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  game:
+    build: .
+    volumes:
+      - .:/app
+    environment:
+      - DISPLAY=${DISPLAY}
+    network_mode: "host"
+    # For Mac users, comment out the above and uncomment below:
+    # environment:
+    #   - DISPLAY=host.docker.internal:0 

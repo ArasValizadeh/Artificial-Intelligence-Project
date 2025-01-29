@@ -22,8 +22,8 @@ path = dirname(abspath(__file__))
 TIMEOUT = 10  # Time limit for the AI agent
 
 parser = argparse.ArgumentParser(description="A Game of Thrones: Hand of the King")
-parser.add_argument('--player1', metavar='p1', type=str, help="either human or an AI file", default='human')
-parser.add_argument('--player2', metavar='p2', type=str, help="either human or an AI file", default='human')
+parser.add_argument('--player1', metavar='p1', type=str, help="either human or an AI file", default='CodeKalakAgent')
+parser.add_argument('--player2', metavar='p2', type=str, help="either human or an AI file", default='random_agent')
 parser.add_argument('-l', '--load', type=str, help="file containing starting board setup (for repeatability)", default=None)
 parser.add_argument('-s', '--save', type=str, help="file to save board setup to", default=None)
 parser.add_argument('-v', '--video', type=str, help="name of the video file to save", default=None)
@@ -560,7 +560,8 @@ def print_cards_status(player1_status, player2_status):
     '''
 
     # Clear the screen
-    clear_screen()
+    # clear_screen()
+    print("--------------------------------")
 
     # Print the status of the cards
     print("Player 1 cards status:", end=' ')
@@ -946,11 +947,11 @@ def main(args):
         else:
             file_name += player2.get_agent()
     
-    try:
-        pygraphics.save_video(file_name) # Save the video of the game
+    # try:
+    #     pygraphics.save_video(file_name) # Save the video of the game
     
-    except:
-        print("Error saving video.")
+    # except:
+    #     print("Error saving video.")
 
 if __name__ == "__main__":
     main(parser.parse_args())
