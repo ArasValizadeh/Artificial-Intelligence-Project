@@ -8,6 +8,8 @@ from os.path import abspath, join, dirname
 import sys
 import json
 import copy
+import consts
+import torch
 
 # Add the utils folder to the path
 sys.path.append(join(dirname(abspath(__file__)), "utils"))
@@ -638,10 +640,11 @@ def validate_agent_move(cards, companion_cards, given_move):
             locations.append(card.get_location())
         
         elif card.get_name() != 'Varys':
-            locations.append(card.get_location())
     
+            locations.append(card.get_location())
+    loop_size = len(given_move) if given_move[0] != 'Jaqen' else len(given_move) - 1
     # Check if the selected cards are valid
-    for i in range(1, len(given_move)):
+    for i in range(1, loop_size):
         if given_move[i] not in locations:
             return False
         
@@ -953,5 +956,64 @@ def main(args):
     # except:
     #     print("Error saving video.")
 
+
+def representation(full_cards: Card , player1s:Player , player2s:Player, companion_cards:Card):
+    map_house = {'Stark': 1, 'Greyjoy': 2, 'Lannister': 3, 'Targaryen': 4, 'Baratheon': 5, 'Tyrell': 6, 'Tully': 7}
+    map_companion_cards = {"Jon": 0,"Jaqen": 1,"Gendry": 2,"Melisandre": 3,"Ramsay": 4,"Sandor": 5}
+    # making the representation for the cards
+    ans = []
+    for i in range(len(full_cards)):
+        representation = torch.zeros((56))
+        
+        cards = full_cards[i]
+        # print(cards)
+        for card in  cards:
+            if card.name == "Varys":
+                representation[card.location] = -1
+                continue
+            house_label = map_house[card.get_house()]
+            house_location = card.location
+            representation[house_location] = house_label
+        # making the representation for the companion_cards
+        cards = companion_cards[i]
+        for card in cards:
+            representation[36+map_companion_cards[card]] = 1
+        # making the representation for the player1
+        player1 = player1s[i]
+        for key in map_house.keys():
+            representation[41 + map_house[key]] = len(player1.cards[key])
+        # making the representation for the player2
+        player2 = player2s[i]
+        for key in map_house.keys():
+            representation[48 + map_house[key]] = len(player2.cards[key])
+        ans.append(representation)
+    return ans
+
 if __name__ == "__main__":
-    main(parser.parse_args())
+    for game in range(11):
+        try:
+            main(parser.parse_args())
+            print(f"{consts.r_consts}")
+            sleep(1)
+            # states = consts.s_consts
+            # rewards = consts.r_consts
+            # p1_data = consts.p1_consts
+            # p2_data = consts.p2_consts
+            # companion_card_data = consts.companion_consts
+            # input_data = representation(states, p1_data, p2_data, companion_card_data)
+        except:
+            print("looping skipping this segment")
+            continue
+    states = consts.s_consts
+    rewards = consts.r_consts
+    p1_data = consts.p1_consts
+    p2_data = consts.p2_consts
+    companion_card_data = consts.companion_consts
+    input_data = representation(states, p1_data, p2_data, companion_card_data)
+    output_data = torch.tensor(rewards)
+    ckpt = {
+        "input_data" : input_data,
+        "output_data" : output_data
+    }
+    # torch.save(ckpt, "/Users/arasvalizadeh/Desktop/check project/Artificial-Intelligence-Project/phase2/nashrie_data3.pt")
+
