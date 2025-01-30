@@ -21,7 +21,7 @@ from classes import Card, Player
 # Set the path of the file
 path = dirname(abspath(__file__))
 
-TIMEOUT = 10  # Time limit for the AI agent
+TIMEOUT = 100000  # Time limit for the AI agent
 
 parser = argparse.ArgumentParser(description="A Game of Thrones: Hand of the King")
 parser.add_argument('--player1', metavar='p1', type=str, help="either human or an AI file", default='CodeKalakAgent')
@@ -990,7 +990,7 @@ def representation(full_cards: Card , player1s:Player , player2s:Player, compani
     return ans
 
 if __name__ == "__main__":
-    for game in range(11):
+    for game in range(1):
         try:
             main(parser.parse_args())
             print(f"{consts.r_consts}")
@@ -1001,8 +1001,8 @@ if __name__ == "__main__":
             # p2_data = consts.p2_consts
             # companion_card_data = consts.companion_consts
             # input_data = representation(states, p1_data, p2_data, companion_card_data)
-        except:
-            print("looping skipping this segment")
+        except Exception as e:
+            print(f"Error encountered: {e}")
             continue
     states = consts.s_consts
     rewards = consts.r_consts
