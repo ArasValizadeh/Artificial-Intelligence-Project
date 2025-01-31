@@ -10,6 +10,8 @@ import json
 import copy
 import consts
 import torch
+from time import sleep
+import consts
 
 # Add the utils folder to the path
 sys.path.append(join(dirname(abspath(__file__)), "utils"))
@@ -21,10 +23,10 @@ from classes import Card, Player
 # Set the path of the file
 path = dirname(abspath(__file__))
 
-TIMEOUT = 10  # Time limit for the AI agent
+TIMEOUT = 1000  # Time limit for the AI agent
 
 parser = argparse.ArgumentParser(description="A Game of Thrones: Hand of the King")
-parser.add_argument('--player1', metavar='p1', type=str, help="either human or an AI file", default='CodeKalakAgent')
+parser.add_argument('--player1', metavar='p1', type=str, help="either human or an AI file", default='CodeKalakAgent2')
 parser.add_argument('--player2', metavar='p2', type=str, help="either human or an AI file", default='random_agent')
 parser.add_argument('-l', '--load', type=str, help="file containing starting board setup (for repeatability)", default=None)
 parser.add_argument('-s', '--save', type=str, help="file to save board setup to", default=None)
@@ -990,30 +992,26 @@ def representation(full_cards: Card , player1s:Player , player2s:Player, compani
     return ans
 
 if __name__ == "__main__":
-    for game in range(11):
-        try:
+    for game in range(20):
+        #try:
             main(parser.parse_args())
-            print(f"{consts.r_consts}")
-            sleep(1)
-            # states = consts.s_consts
-            # rewards = consts.r_consts
-            # p1_data = consts.p1_consts
-            # p2_data = consts.p2_consts
-            # companion_card_data = consts.companion_consts
-            # input_data = representation(states, p1_data, p2_data, companion_card_data)
-        except:
-            print("looping skipping this segment")
-            continue
-    states = consts.s_consts
-    rewards = consts.r_consts
-    p1_data = consts.p1_consts
-    p2_data = consts.p2_consts
-    companion_card_data = consts.companion_consts
-    input_data = representation(states, p1_data, p2_data, companion_card_data)
-    output_data = torch.tensor(rewards)
-    ckpt = {
-        "input_data" : input_data,
-        "output_data" : output_data
-    }
-    # torch.save(ckpt, "/Users/arasvalizadeh/Desktop/check project/Artificial-Intelligence-Project/phase2/nashrie_data3.pt")
+        #except:
+         #continue
 
+    # states = consts.s_consts
+    # rewards = consts.r_consts
+    # p1_data = consts.p1_consts
+    # p2_data = consts.p2_consts
+    # companion_card_data = consts.companion_consts
+    # input_data = representation(states, p1_data, p2_data, companion_card_data)
+    # output_data = torch.tensor(rewards)
+    # print(input_data)
+    # print(output_data)
+    # ckpt = {
+    #                     "input_data" : input_data,
+    #                     "output_data" : output_data
+    # }
+    # print(ckpt['input_data'])
+    # print(ckpt['output_data'])
+    # torch.save(ckpt, "/Users/arasvalizadeh/Desktop/check project/Artificial-Intelligence-Project/phase2/doctor/doctor_data.pt")
+    # print("data saved")
