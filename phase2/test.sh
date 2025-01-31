@@ -7,10 +7,10 @@ agent2_wins=0
 agent_name1="CodeKalakAgent2"
 agent_name2="random_agent"
 
-for i in {1..10}
+for i in {1..5}
 do
     echo "🚀 Running game $i"
-    result=$(python3 main.py --player1 "$agent_name1" --player2 "$agent_name2")
+    result=$(python3.11 main.py --player1 "$agent_name1" --player2 "$agent_name2")
 
     # Check the output and increment the counters
     if [[ $result == *"$agent_name1"* ]]; then

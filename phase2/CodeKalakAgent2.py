@@ -36,22 +36,23 @@ class MyModel(nn.Module):
         x = self.fc4(x) 
         return x
 
-# Modify the model loading line
-# get static path and add weights/best_model_with_norm4.pth
-path = dirname(abspath(__file__))
-print(path + "/weights/best_model_with_norm4.pth")
-checkpoint = torch.load(
-    path+"/weights/best_model_with_norm4.pth",
-    map_location=torch.device("cpu"),
-    weights_only=False
-)
-input_mean = checkpoint['input_mean']
-input_std = checkpoint['input_std']
+# List of model filenames
+model_filenames = ["best_model_with_norm3.pth", "best_model_with_norm5.pth",
+                   "best_model_with_norm7.pth", "best_model_with_norm89.pth","best_model_with_norm96.pth"]
 
-# Instantiate model and load weights
-model = MyModel(input_mean, input_std)
-model.load_state_dict(checkpoint['model_state_dict'])
-model.eval() 
+# Load multiple models
+models = []
+path = dirname(abspath(__file__)) + "/weights/"
+
+for filename in model_filenames:
+    checkpoint = torch.load(path + filename, map_location=torch.device("cpu"))
+    input_mean = checkpoint['input_mean']
+    input_std = checkpoint['input_std']
+    
+    model = MyModel(input_mean, input_std)
+    model.load_state_dict(checkpoint['model_state_dict'])
+    model.eval()  # Set to evaluation mode
+    models.append(model)
 
 def representation(full_cards: Card , player1s:Player , player2s:Player, companion_cards:Card):
     map_house = {'Stark': 1, 'Greyjoy': 2, 'Lannister': 3, 'Targaryen': 4, 'Baratheon': 5, 'Tyrell': 6, 'Tully': 7}
@@ -126,17 +127,14 @@ def evaluate_state2(cards, player1, player2):
     score += (player1_moves - player2_moves) * 3
     return score
 
-def evaluate_state(cards,player1 , player2 , companion_cards):
-    model.eval()  # Ensure the model is in evaluation mode
-
-   
-    # Convert game state to tensor
+def evaluate_state(cards, player1, player2, companion_cards):
     state_tensor = torch.stack(representation([cards], [player1], [player2], [companion_cards])).float()
 
     with torch.no_grad():  # Disable gradients for inference
-        score = model(state_tensor)  # Forward pass through the network
-
-    return score.item()  # Convert to scala
+        predictions = [model(state_tensor) for model in models]  # Get predictions from all models
+    
+    avg_score = torch.mean(torch.stack(predictions))  # Compute the average prediction
+    return avg_score.item()  # Convert to scalar # Convert to scala
 
 
 def minimax(cards, player1, player2, depth, is_maximizing,companion_cards ,alpha=-inf, beta=inf, no_heuristic=False):

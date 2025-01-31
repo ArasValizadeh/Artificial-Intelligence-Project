@@ -2,7 +2,7 @@ import torch
 import os
 import numpy as np
 
-folder_path = "/Users/arasvalizadeh/Desktop/check project/Artificial-Intelligence-Project/phase2/agent_4"
+folder_path = "/Users/arasvalizadeh/Desktop/check project/Artificial-Intelligence-Project/phase2/Dataset"
 output_file = os.path.join(folder_path, "/Users/arasvalizadeh/Desktop/check project/Artificial-Intelligence-Project/phase2/merged_dataset2.pt")
 
 all_input_data = []
