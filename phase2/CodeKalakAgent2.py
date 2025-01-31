@@ -37,9 +37,11 @@ class MyModel(nn.Module):
         return x
 
 # Modify the model loading line
-
+# get static path and add weights/best_model_with_norm4.pth
+path = dirname(abspath(__file__))
+print(path + "/weights/best_model_with_norm4.pth")
 checkpoint = torch.load(
-    "./weights/best_model_with_norm3.pth",
+    path+"/weights/best_model_with_norm4.pth",
     map_location=torch.device("cpu"),
     weights_only=False
 )
