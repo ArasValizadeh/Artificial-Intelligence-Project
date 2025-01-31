@@ -6,7 +6,7 @@ import torch.nn.functional as F
 from sklearn.preprocessing import StandardScaler
 
 
-x = torch.load("/Users/arasvalizadeh/Desktop/check project/Artificial-Intelligence-Project/phase2/merged_dataset2.pt", 
+x = torch.load("/Users/arasvalizadeh/Desktop/check project/Artificial-Intelligence-Project/phase2/Dataset/merged_dataset.pt", 
                map_location=torch.device("cpu"))
 
 input_data = np.asarray(x['input_data'], dtype=np.float32)  
@@ -36,8 +36,10 @@ class MyModel(nn.Module):
     def initialize_weights(self):
         """Initialize all layers with Normal distribution"""
         for layer in [self.fc1, self.fc2, self.fc3, self.fc4]:
-            nn.init.normal_(layer.weight, mean=0.0, std=0.03)
-            nn.init.normal_(layer.bias, mean=0.0, std=0.03)
+            # nn.init.normal_(layer.weight, mean=0.0, std=2.0)
+            # nn.init.normal_(layer.bias, mean=2.0, std=0.5)
+            nn.init.xavier_uniform_(layer.weight)  # Xavier initialization
+            nn.init.zeros_(layer.bias)  # Initialize biases to zero
 
     def forward(self, x):
         """Forward pass through network with automatic normalization"""
@@ -53,10 +55,10 @@ class MyModel(nn.Module):
 model = MyModel(input_mean, input_std)
 
 criterion = nn.L1Loss()  # Huber Loss
-optimizer = optim.AdamW(model.parameters(), lr=0.01, weight_decay=1e-2) 
-scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=400, gamma=0.3)  # Reduce LR every 500 epochs
+optimizer = optim.AdamW(model.parameters(), lr=0.01, weight_decay=9e-2) 
+scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=400, gamma=0.4)  # Reduce LR every 500 epochs
 
-batch_size = 500
+batch_size = 512
 epochs = 2000
 
 
@@ -83,7 +85,7 @@ torch.save({
     'model_state_dict': model.state_dict(),
     'input_mean': input_mean,
     'input_std': input_std
-}, "best_model_with_norm9.pth")
+}, "best_model_with_norm96.pth")
 
 
 
